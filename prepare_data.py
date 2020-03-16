@@ -13,12 +13,14 @@ import nltk
 
 
 def prep_text(mission):
+    """Preps mission statement by tokenizing sentences and words."""
     sentences = nltk.sent_tokenize(mission)
     sentences = [nltk.word_tokenize(sent) for sent in sentences]
     return sentences
 
 
-# First time download stop words
+# First time download stop words + punkt
+nltk.download('punkt')
 nltk.download('stopwords')
 
 # Load Stop Words
