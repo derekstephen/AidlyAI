@@ -86,8 +86,6 @@ df["POS"] = df["POS"].apply(lambda column: [y for x in column for y in x])
 # Lemmatization of Words
 df["LEMMATIZATION"] = df["POS"].apply(lambda x: [wordnet_lemmatizer.lemmatize(pair[0], pos=get_wordnet_pos(pair[1])) for pair in x])
 
-
-
 # END STEP ONE CODE
 
 # Separate Data to view easily
