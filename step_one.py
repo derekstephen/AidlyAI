@@ -8,7 +8,7 @@ Created on Sat Mar  7 02:55:49 2020
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import snowball, WordNetLemmatizer
 
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 import pandas as pd
 import nltk
@@ -65,6 +65,27 @@ def get_wordnet_pos(treebank_tag):
         return wordnet.NOUN
 
 
+def computeTFDict(mission):
+    """ Returns a tf dictionary for each mission whose keys are all 
+    the unique words in the mission and whose values are their 
+    corresponding tf.
+    """
+    #Counts the number of times the word appears in review
+    missionTFDict = {}
+    for word in mission:
+        if word in missionTFDict:
+            missionTFDict[word] += 1
+        else:
+            missionTFDict[word] = 1
+    #Computes tf for each word           
+    for word in missionTFDict:
+        missionTFDict[word] = missionTFDict[word] / len(mission)
+    return missionTFDict
+
+
+
+
+
 # First time download wordnet
 nltk.download('wordnet')
 
@@ -86,8 +107,15 @@ df["POS"] = df["POS"].apply(lambda column: [y for x in column for y in x])
 # Lemmatization of Words
 df["LEMMATIZATION"] = df["POS"].apply(lambda x: [wordnet_lemmatizer.lemmatize(pair[0], pos=get_wordnet_pos(pair[1])) for pair in x])
 
+# Calc TF Dictionary for mission
+df["TF"] = df["LEMMATIZATION"].apply(lambda x: computeTFDict(x))
+
+
+
+
+
 # END STEP ONE CODE
 
 # Separate Data to view easily
 
-df_imp = df[["EIN", "NAME", "F9_03_PZ_MISSION", "MISSION", "WORD", "POS", "STEMMER", "LEMMATIZATION"]]
+df_imp = df[["EIN", "NAME", "F9_03_PZ_MISSION", "MISSION", "WORD", "POS", "STEMMER", "LEMMATIZATION", "TF"]]
