@@ -13,6 +13,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 import nltk
 
+
 # PREPARE DATA CODE
 
 
@@ -24,7 +25,7 @@ def prep_text(mission):
 
 
 # First time download stop words
-#nltk.download('stopwords')
+nltk.download('stopwords')
 
 # Load Stop Words
 stop_words = stopwords.words('english')
@@ -44,6 +45,7 @@ df["WORD"] = df["WORD"].apply(lambda column: [y for x in column for y in x])
 # Remove Stop Words
 df["WORD"] = df["WORD"].apply(lambda x: [item for item in x if item not in stop_words])
 
+
 # END PREPARE DATA CODE
 
 # START STEP ONE CODE
@@ -59,12 +61,12 @@ def get_wordnet_pos(treebank_tag):
         return wordnet.NOUN
     elif treebank_tag.startswith('R'):
         return wordnet.ADV
-    else:
-        return ''
-    
+    else:  # Default Option
+        return wordnet.NOUN
+
 
 # First time download wordnet
-#nltk.download('wordnet')
+nltk.download('wordnet')
 
 # Create Porter Stemmer
 stemmer = snowball.SnowballStemmer('english')
@@ -78,14 +80,13 @@ df["POS"] = df["WORD"].apply(lambda x: [nltk.pos_tag(x)])
 # Create WordNet Lemmatization
 wordnet_lemmatizer = WordNetLemmatizer()
 
-#Flatten POS to one list
+# Flatten POS to one list
 df["POS"] = df["POS"].apply(lambda column: [y for x in column for y in x])
 
 # Lemmatization of Words
-df["LEMMATIZATION"] = df["POS"].apply(lambda x: [wordnet_lemmatizer.lemmatize(pair[0], pos=get_wordnet_pos(pair[1])) if get_wordnet_pos(pair[1]) != '' else wordnet_lemmatizer.lemmatize(pair[0]) for sent in x for pair in sent])
+df["LEMMATIZATION"] = df["POS"].apply(lambda x: [wordnet_lemmatizer.lemmatize(pair[0], pos=get_wordnet_pos(pair[1])) for pair in x])
 
-# Lemmatization of Words
-#df["LEMMATIZATION"] = df["POS"].apply(lambda x: [wordnet_lemmatizer.lemmatize(pair[0], pos=get_wordnet_pos(pair[1])) for sent in x for pair in sent])
+
 
 # END STEP ONE CODE
 
