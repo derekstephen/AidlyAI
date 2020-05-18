@@ -7,11 +7,10 @@ Created on Sat Mar  7 02:55:49 2020
 # Load Libraries & Dependencies
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import snowball, WordNetLemmatizer
+import nltk
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-
 import pandas as pd
-import nltk
 
 
 # PREPARE DATA CODE
@@ -24,7 +23,8 @@ def prep_text(mission):
     return sentences
 
 
-# First time download stop words
+# First time download stop words + punkt
+nltk.download('punkt')
 nltk.download('stopwords')
 
 # Load Stop Words
@@ -33,17 +33,15 @@ stop_words = stopwords.words('english')
 # Import data
 df = pd.read_csv("./Data/MISSION.csv")
 
-# Separate Mission to Sentences
-df["MISSION"] = df["F9_03_PZ_MISSION"].apply(lambda x: nltk.sent_tokenize(str(x).lower()))
-
 # Split Mission to Sentences and then Words
-df["WORD"] = df["F9_03_PZ_MISSION"].apply(lambda x: prep_text(str(x).lower()))
+df_missions = df["F9_03_PZ_MISSION"].apply(lambda x: prep_text(str(x).lower()))
+df["MISSION"] = df_missions
 
-# Flatten Separated Words to one list
-df["WORD"] = df["WORD"].apply(lambda column: [y for x in column for y in x])
+# Flatten Separated Words to one List
+df["WORDS"] = df["MISSION"].apply(lambda column: [y for x in column for y in x])
 
 # Remove Stop Words
-df["WORD"] = df["WORD"].apply(lambda x: [item for item in x if item not in stop_words])
+df["WORDS"] = df["WORDS"].apply(lambda x: [item for item in x if item not in stop_words])
 
 
 # END PREPARE DATA CODE
@@ -88,15 +86,16 @@ def computeTFDict(mission):
 
 # First time download wordnet
 nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 
 # Create Porter Stemmer
 stemmer = snowball.SnowballStemmer('english')
 
 # Stem mission statements
-df["STEMMER"] = df["WORD"].apply(lambda x: [stemmer.stem(word) for word in x])
+df["STEMMER"] = df["WORDS"].apply(lambda x: [stemmer.stem(word) for word in x])
 
 # Get POS for each word to use in Lemmatizer
-df["POS"] = df["WORD"].apply(lambda x: [nltk.pos_tag(x)])
+df["POS"] = df["WORDS"].apply(lambda x: [nltk.pos_tag(x)])
 
 # Create WordNet Lemmatization
 wordnet_lemmatizer = WordNetLemmatizer()
@@ -118,4 +117,4 @@ df["TF"] = df["LEMMATIZATION"].apply(lambda x: computeTFDict(x))
 
 # Separate Data to view easily
 
-df_imp = df[["EIN", "NAME", "F9_03_PZ_MISSION", "MISSION", "WORD", "POS", "STEMMER", "LEMMATIZATION", "TF"]]
+df_imp = df[["EIN", "NAME", "F9_03_PZ_MISSION", "MISSION", "WORDS", "POS", "STEMMER", "LEMMATIZATION", "TF"]]
