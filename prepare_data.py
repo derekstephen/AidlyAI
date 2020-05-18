@@ -7,9 +7,9 @@ Created on Thu Mar 12 17:37:37 2020
 
 # Load Libraries & Dependencies
 from nltk.corpus import stopwords
+import nltk
 
 import pandas as pd
-import nltk
 
 
 def prep_text(mission):
