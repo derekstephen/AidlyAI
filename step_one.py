@@ -76,7 +76,7 @@ def computetfdict(mission):
             missiontfdict[word] = 1
     # Computes tf for each word
     for word in missiontfdict:
-        missiontfdict[word] = missiontfdict[word] / len(mission)
+        missiontfdict[word] /= len(mission)
     return missiontfdict
 
 
