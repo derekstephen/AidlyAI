@@ -98,7 +98,7 @@ def main():
     # End of Libraries and Dependencies
 
     # Import data
-    df = pd.read_csv("./Data/MISSION.csv")
+    df = pd.read_csv("./Data/MISSION_CLEAN.csv")
 
     df_short = df[:1000].copy()
 
@@ -201,7 +201,7 @@ def main():
     start = 2;
     step = 6;
     x = range(start, limit, step)
-    plt.title("Non-Clean Mission Statements")
+    plt.title("1000 Clean Mission Statements")
     plt.plot(x, coherence_values)
     plt.xlabel("Num Topics")
     plt.ylabel("Coherence score")
