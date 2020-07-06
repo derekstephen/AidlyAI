@@ -98,12 +98,12 @@ def main():
     # End of Libraries and Dependencies
 
     # Import data
-    df = pd.read_csv("./Data/MISSION_CLEAN.csv")
+    df = pd.read_csv("./Data/berks_NGOs.csv")
 
-    df_short = df[:1000].copy()
+    df_short = df.copy()
 
     # Convert Mission statements to list
-    data = df_short.F9_03_PZ_MISSION.values.tolist()
+    data = df_short.Mission_Statement.values.tolist()
 
     # Tokenize Words and Clean up Text
     data_words = list(sent_to_words(data))
@@ -201,7 +201,7 @@ def main():
     start = 2;
     step = 6;
     x = range(start, limit, step)
-    plt.title("1000 Clean Mission Statements")
+    plt.title("Berks Mission Statements")
     plt.plot(x, coherence_values)
     plt.xlabel("Num Topics")
     plt.ylabel("Coherence score")
@@ -253,6 +253,7 @@ def main():
     df_dominant_topics.columns = ['Dominant_Topic', 'Topic_Keywords', 'Num_Documents', 'Perc_Documents']
 
     print(df_dominant_topics)
+
 
     vis = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
     pyLDAvis.show(vis)
